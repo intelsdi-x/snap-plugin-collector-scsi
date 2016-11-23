@@ -16,112 +16,67 @@ limitations under the License.
 
 package scsi
 
-import (
-	"fmt"
-
-	"github.com/intelsdi-x/snap/control/plugin"
-	"github.com/intelsdi-x/snap/control/plugin/cpolicy"
-	"github.com/intelsdi-x/snap/core"
-)
+import "github.com/intelsdi-x/snap-plugin-lib-go/v1/plugin"
 
 const (
 
 	// PLUGIN scsi collector namespace part
-	pluginName = "scsi"
+	Name = "scsi"
 	// VERSION of scsi info plugin
-	pluginVersion = 1
-	// Type of plugin
-	pluginType = plugin.CollectorPluginType
+	Version = 1
 	// VENDOR namespace part
 	nsVendor = "intel"
 	// FS namespace part
 	nsClass = "scsi"
-	nsType  = "filesystem"
-	SysPath = "sys_path"
-	nVendor = "vendor"
-	nModel  = "model"
 )
 
 var (
 	//sysPath source of data for metrics
 	sysPath = "/sys/bus/scsi/devices/"
-	// prefix in metric namespace
-	// prefix in metric namespac
-	namespacePrefix = []string{nsVendor, nsClass, nsType}
+	// name of available metrics
+	scsiMetricsTypes = []string{"iodone_cnt", "ioerr_cnt", "iorequest_cnt"}
 )
 
-// name of available metrics
-var scsiMetricsTypes = []string{"iodone_cnt", "ioerr_cnt", "iorequest_cnt"}
-
-//Scsi holds scsi statistics
-type Scsi struct {
-	data    int64
-	sysPath string
+type ScsiCollector struct {
 }
 
-// NewScsi creates new instance of plugin and returns pointer to initialized object.
-func New() *Scsi {
-	s := &Scsi{}
-	return s
+func (ScsiCollector) GetConfigPolicy() (plugin.ConfigPolicy, error) {
+
+	policy := plugin.NewConfigPolicy()
+	policy.AddNewStringRule([]string{"sys_path", "string"},
+		"/sys/", false)
+	return *policy, nil
 }
 
-// Meta returns plugin meta data
-func Meta() *plugin.PluginMeta {
-	return plugin.NewPluginMeta(
-		pluginName,
-		pluginVersion,
-		plugin.CollectorPluginType,
-		[]string{},
-		[]string{plugin.SnapGOBContentType},
-		plugin.ConcurrencyCount(1),
-	)
-}
+func (ScsiCollector) GetMetricTypes(cfg plugin.Config) ([]plugin.Metric, error) {
 
-// GetConfigPolicy returns a ConfigPolicy
-func (sc *Scsi) GetConfigPolicy() (*cpolicy.ConfigPolicy, error) {
-	cp := cpolicy.New()
-	rule, _ := cpolicy.NewStringRule("sys_path", false, "/sys/")
-	node := cpolicy.NewPolicyNode()
-	node.Add(rule)
-	cp.Add([]string{nsVendor, pluginName}, node)
-	return cp, nil
-}
-
-// GetMetricTypes returns list of exposed disk stats metrics
-func (sc *Scsi) GetMetricTypes(cfg plugin.ConfigType) ([]plugin.MetricType, error) {
-	mts := []plugin.MetricType{}
+	mts := []plugin.Metric{}
 	for _, metric := range scsiMetricsTypes {
-		metric := plugin.MetricType{Namespace_: core.NewNamespace(nsVendor, nsClass, metric)}
+		metric := plugin.Metric{Namespace: plugin.NewNamespace(nsVendor, nsClass).AddDynamicElement("device_id", "Id of the scsi device").AddStaticElement(metric)}
 		mts = append(mts, metric)
 	}
 	return mts, nil
 }
 
 // CollectMetrics returns metrics
-func (sc *Scsi) CollectMetrics(mts []plugin.MetricType) ([]plugin.MetricType, error) {
-	metrics := []plugin.MetricType{}
-	/*
+func (ScsiCollector) CollectMetrics(mts []plugin.Metric) ([]plugin.Metric, error) {
+	metrics := []plugin.Metric{}
+
+	for _, m := range mts {
+		lastElement := len(m.Namespace.Strings()) - 1
+		cnt := m.Namespace.Strings()[lastElement]
 		scsiList, err := listScsiDevices(sysPath)
 		if err != nil {
 			return nil, err
-		}*/
+		}
 
-	for _, m := range mts {
-		ns := m.Namespace()
-		//	cnt := m.Namespace().Strings[-1]
-		cnt := m.Namespace().String()
-		cntr, err := getCounter(cnt)
+		metric, err := getCounter(cnt, scsiList, m.Namespace)
 		if err != nil {
 			return nil, err
 		}
-		metric := plugin.MetricType{
-			Namespace_: ns,
-			Data_:      cntr,
-		}
+		metrics = append(metrics, metric...)
 
-		metrics = append(metrics, metric)
 	}
-	fmt.Println(metrics)
 	return metrics, nil
 
 }

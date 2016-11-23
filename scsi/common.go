@@ -8,6 +8,8 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/intelsdi-x/snap-plugin-lib-go/v1/plugin"
 )
 
 func listScsiDevices(dirname string) ([]string, error) {
@@ -30,13 +32,26 @@ func listScsiDevices(dirname string) ([]string, error) {
 
 }
 
-func getCounter(counterName string) (int64, error) {
-	filePath := filepath.Join(sysPath, counterName)
-	cnt, err := readHex(filePath)
-	if err != nil {
-		return 0, err
+func getCounter(counterName string, scsiList []string, ns plugin.Namespace) ([]plugin.Metric, error) {
+	metrics := []plugin.Metric{}
+	for _, dev := range scsiList {
+		newNs := make([]plugin.NamespaceElement, len(ns))
+		copy(newNs, ns)
+		newNs[2].Value = dev
+
+		filePath := filepath.Join(sysPath, dev, counterName)
+		cnt, err := readHex(filePath)
+		if err != nil {
+			return metrics, nil
+		}
+		metric := plugin.Metric{
+			Namespace: ns,
+			Data:      cnt,
+		}
+		metrics = append(metrics, metric)
 	}
-	return cnt, nil
+
+	return metrics, nil
 }
 
 func readHex(filename string) (int64, error) {
@@ -58,9 +73,6 @@ func readHex(filename string) (int64, error) {
 
 	number, _ := strconv.ParseInt(i, 10, 64)
 
-	//if err != nil {
-	//	return 0, err
-	//	}
 	return number, nil
 
 }

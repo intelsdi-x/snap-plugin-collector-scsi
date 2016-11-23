@@ -17,18 +17,11 @@ limitations under the License.
 package main
 
 import (
-	"os"
-
 	"github.com/intelsdi-x/snap-plugin-collector-scsi/scsi"
-	"github.com/intelsdi-x/snap/control/plugin"
+
+	"github.com/intelsdi-x/snap-plugin-lib-go/v1/plugin"
 )
 
 func main() {
-
-	//plugin.Start(s csi.Meta(),scsi.New(), os.Args[1])
-	plugin.Start(
-		scsi.Meta(),
-		scsi.New(),
-		os.Args[1],
-	)
+	plugin.StartCollector(scsi.ScsiCollector{}, scsi.Name, scsi.Version)
 }

@@ -119,8 +119,7 @@ Namespace | Data Type  |Description
 /intel/scsi//iodoneCnt | int64|
 /intel/scsi//ioerrorCnt | int64|
 /intel/scsi//iorequestCnt/ int64|
-/intel/scsi//vendor | int64|
-/intel/scsi//model | int64|
+
 
 
 ### Roadmap
