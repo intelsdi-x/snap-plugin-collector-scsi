@@ -40,14 +40,16 @@ var (
 type ScsiCollector struct {
 }
 
+//GetConfigPolicy returns a ConfigPolicy
 func (ScsiCollector) GetConfigPolicy() (plugin.ConfigPolicy, error) {
 
 	policy := plugin.NewConfigPolicy()
-	policy.AddNewStringRule([]string{"sys_path", "string"},
+	policy.AddNewStringRule([]string{"sysPath", "string"},
 		"/sys/", false)
 	return *policy, nil
 }
 
+// GetMetricTypes returns the metric types
 func (ScsiCollector) GetMetricTypes(cfg plugin.Config) ([]plugin.Metric, error) {
 
 	mts := []plugin.Metric{}

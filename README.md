@@ -1,5 +1,9 @@
-# snap-plugin-collector-scsi
-Collects Linux SCSI statistics
+[![Build Status](https://api.travis-ci.org/intelsdi-x/snap-plugin-collector-scsi.svg)](https://travis-ci.org/intelsdi-x/snap-plugin-collector-scsi )
+[![Go Report Card](http://goreportcard.com/badge/intelsdi-x/snap-plugin-collector-scsi)](http://goreportcard.com/report/intelsdi-x/snap-plugin-collector-scsi)
+
+This plugin collects metrics from scsi.  
+
+It's used in the [Snap framework](http://github.com:intelsdi-x/snap).
 
 1. [Getting Started](#getting-started)
   * [System Requirements](#system-requirements)
@@ -7,13 +11,13 @@ Collects Linux SCSI statistics
   * [Installation](#installation)
   * [Configuration and Usage](#configuration-and-usage)
 2. [Documentation](#documentation)
-  * [Collected Metrics](#collected-metrics)
   * [Examples](#examples)
   * [Roadmap](#roadmap)
 3. [Community Support](#community-support)
 4. [Contributing](#contributing)
-5. [License](#license)
+5. [License](#license-and-authors)
 6. [Acknowledgements](#acknowledgements)
+7. [Thank you](#thank-you)
 
 ## Getting Started
 
@@ -21,6 +25,15 @@ Collects Linux SCSI statistics
 
 ### System Requirements
 
+* golang 1.7+ - needed only for building
+* This Plugin compatible with kernel > 2.6
+* Linux/amd64
+
+### Operating systems
+
+All OSs currently supported by snap:
+* Linux/amd64
+* Darwin/amd64
 
 ### Installation
 #### Download use plugin binary:
@@ -37,90 +50,75 @@ Build the plugin by running make in repo:
 ```
 $ make
 ```
-This builds the plugin in `/build/rootfs`
+This builds the plugin in `/build/`
 
 ### Configuration and Usage
 * Set up the [snap framework](https://github.com/intelsdi-x/snap/blob/master/README.md#getting-started)
-* Ensure `$SNAP_PATH` is exported
-`export SNAP_PATH=$GOPATH/src/github.com/intelsdi-x/snap/build`
-
-### Examples
-Example running scsi plugin, passthru processor, and writing data into an csv file.
-
-Documentation for snap file publisher can be found [here](https://github.com/intelsdi-x/snap)
-
-In one terminal window, open the snap daemon :
-```
-$ snapd -t 0 -l 1
-```
-The option "-l 1" it is for setting the debugging log level and "-t 0" is for disabling plugin signing.
-
-In another terminal window:
-
-Load collector and processor and Publisher plugins
-```
-$ snapctl plugin load $SNAP_SCSI_PLUGIN/build/rootfs/snap-plugin-collector-scsi
-$ snapctl plugin load $SNAP_PATH/build/plugin/snap-plugin-publisher-file
-$ snapctl plugin load $SNAP_PATH/build/plugin/snap-plugin-processor-passthru
-```
-
-See available metrics for your system
-```
-$ snapctl metric list
-```
-
-Create a task file. For example, sample-scsi-task.json:
-
-```
-{
-    "version": 1,
-    "schedule": {
-        "type": "simple",
-        "interval": "1s"
-    },
-    "workflow": {
-        "collect": {
-            "metrics": {
-                "/intel/scsi/ioerr_cnt": {},
-                "/intel/scsi/iodone_cnt": {},
-                "/intel/scsi/iorequest_cnt": {},
-
-
-            },
-            "process": [
-                {
-                    "plugin_name": "passthru",
-                    "process": null,
-                    "publish": [
-                        {
-                            "plugin_name": "file",
-                            "config": {
-                                "file": "/tmp/published"
-                            }
-                        }
-                    ]
-                }
-            ]
-        }
-    }
-}
-```
+* Load the plugin and create a task, see example in [Examples](#examples).
 
 ## Documentation
+### Examples
 
-*************Need to be update this area******************************************
+Example of running snap scsi collector and writing data to file.
 
+Ensure [snap daemon is running](https://github.com/intelsdi-x/snap#running-snap):
+* initd: `service snap-telemetry start`
+* systemd: `systemctl start snap-telemetry`
+* command line: `snapd -l 1 -t 0 &`
 
-### Collected Metrics
-This plugin has the ability to gather the following metrics:
+Download and load snap plugins:
+```
+$ wget http://snap.ci.snap-telemetry.io/plugins/snap-plugin-collector-scsi/latest/linux/x86_64/snap-plugin-collector-scsi
+$ wget http://snap.ci.snap-telemetry.io/plugins/snap-plugin-publisher-file/latest/linux/x86_64/snap-plugin-publisher-file
+$ chmod 755 snap-plugin-*
+$ snapctl plugin load snap-plugin-collector-scsi
+$ snapctl plugin load snap-plugin-publisher-file
 
-Namespace | Data Type  |Description
-----------|-----------|-----------|-----------|-----------|
-/intel/scsi//iodoneCnt | int64|
-/intel/scsi//ioerrorCnt | int64|
-/intel/scsi//iorequestCnt/ int64|
+Create a task manifest file  (exemplary files in [examples/tasks/] (examples/tasks/)):
+```yaml
+---
+  version: 1
+  schedule:
+    type: "simple"
+    interval: "1s"
+  max-failures: 10
+  workflow:
+    collect:
+      metrics:
+         /intel/scsi/iodone_cnt: {}
+         /intel/scsi/ioerr_cnt: {}
+         /intel/scsi/iorequest_cnt: {}
 
+      publish:
+        - plugin_name: "file"
+          config:
+            file: "/tmp/scsi_metrics.log"
+```
+Download an [example task file](https://github.com/intelsdi-x/snap-plugin-collector-scsi/blob/master/examples/tasks/) and load it:
 
+```
+$ curl -sfLO https://raw.githubusercontent.com/intelsdi-x/snap-plugin-collector-scsi/master/examples/tasks/scsi-file.json
+$ snapctl task create -t scsi-file.json
+Using task manifest to create task
+Task created
+ID: 250323af-12b0-4bf8-a526-eb2ca7d8ae32
+Name: Task-250323af-12b0-4bf8-a526-eb2ca7d8ae32
+State: Running
+```
+
+See realtime output from `snapctl task watch <task_id>` (CTRL+C to exit)
+```
+$ snapctl task watch 250323af-12b0-4bf8-a526-eb2ca7d8ae32
+```
+
+This data is published to a file `/tmp/scsi_metrics` per task specification
+
+Stop task:
+```
+$ snapctl task stop 250323af-12b0-4bf8-a526-eb2ca7d8ae32
+Task stopped:
+ID: 250323af-12b0-4bf8-a526-eb2ca7d8ae32
+```
 
 ### Roadmap
 As we launch this plugin, we do not have any outstanding requirements for the next release. If you have a feature request, please add it as an [issue](https://github.com/intelsdi-x/snap-plugin-collector-scsi/issues).
