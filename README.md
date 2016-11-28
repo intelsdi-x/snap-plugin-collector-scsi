@@ -85,9 +85,9 @@ Create a task manifest file  (exemplary files in [examples/tasks/] (examples/tas
   workflow:
     collect:
       metrics:
-         /intel/scsi/iodone_cnt: {}
-         /intel/scsi/ioerr_cnt: {}
-         /intel/scsi/iorequest_cnt: {}
+         /intel/scsi/*/iodone_cnt: {}
+         /intel/scsi/*/ioerr_cnt: {}
+         /intel/scsi/*/iorequest_cnt: {}
 
       publish:
         - plugin_name: "file"

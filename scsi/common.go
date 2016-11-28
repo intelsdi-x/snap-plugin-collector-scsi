@@ -54,7 +54,7 @@ func getCounter(counterName string, scsiList []string, ns plugin.Namespace) ([]p
 		copy(newNs, ns)
 		newNs[2].Value = dev
 
-		filePath := filepath.Join(sysPath, dev, counterName)
+		filePath := filepath.Join(scsiPath, dev, counterName)
 		cnt, err := readHex(filePath)
 		if err != nil {
 			return metrics, nil

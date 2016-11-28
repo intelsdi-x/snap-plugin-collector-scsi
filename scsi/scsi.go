@@ -16,7 +16,11 @@ limitations under the License.
 
 package scsi
 
-import "github.com/intelsdi-x/snap-plugin-lib-go/v1/plugin"
+import (
+	"path/filepath"
+
+	"github.com/intelsdi-x/snap-plugin-lib-go/v1/plugin"
+)
 
 const (
 
@@ -32,7 +36,7 @@ const (
 
 var (
 	//sysPath source of data for metrics
-	sysPath = "/sys/bus/scsi/devices/"
+	scsiPath = "bus/scsi/devices/"
 	// name of available metrics
 	scsiMetricsTypes = []string{"iodone_cnt", "ioerr_cnt", "iorequest_cnt"}
 )
@@ -44,8 +48,8 @@ type ScsiCollector struct {
 func (ScsiCollector) GetConfigPolicy() (plugin.ConfigPolicy, error) {
 
 	policy := plugin.NewConfigPolicy()
-	policy.AddNewStringRule([]string{"sysPath", "string"},
-		"/sys/", false)
+	policy.AddNewStringRule([]string{"intel", "scsi"},
+		"sysPath", false, plugin.SetDefaultString("/sys"))
 	return *policy, nil
 }
 
@@ -63,6 +67,11 @@ func (ScsiCollector) GetMetricTypes(cfg plugin.Config) ([]plugin.Metric, error) 
 // CollectMetrics returns metrics
 func (ScsiCollector) CollectMetrics(mts []plugin.Metric) ([]plugin.Metric, error) {
 	metrics := []plugin.Metric{}
+	sysPathConf, err := mts[0].Config.GetString("sysPath")
+	if err != nil {
+		return nil, err
+	}
+	sysPath := filepath.Join(sysPathConf, scsiPath)
 
 	for _, m := range mts {
 		lastElement := len(m.Namespace.Strings()) - 1
