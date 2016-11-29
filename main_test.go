@@ -21,8 +21,7 @@ import (
 	"os"
 	"testing"
 
-	. "github.com/gls"
-	. "github.com/goconvey/convey"
+	. "github.com/smartystreets/goconvey/convey"
 )
 
 func TestMain(t *testing.T) {

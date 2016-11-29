@@ -64,7 +64,7 @@ Example of running snap scsi collector and writing data to file.
 Ensure [snap daemon is running](https://github.com/intelsdi-x/snap#running-snap):
 * initd: `service snap-telemetry start`
 * systemd: `systemctl start snap-telemetry`
-* command line: `snapd -l 1 -t 0 &`
+* command line: `snapteld -l 1 -t 0 &`
 
 Download and load snap plugins:
 ```
@@ -92,7 +92,7 @@ Create a task manifest file  (exemplary files in [examples/tasks/] (examples/tas
       publish:
         - plugin_name: "file"
           config:
-            file: "/tmp/scsi_metrics.log"
+            file: "/tmp/scsi_metrics"
 ```
 Download an [example task file](https://github.com/intelsdi-x/snap-plugin-collector-scsi/blob/master/examples/tasks/) and load it:
 

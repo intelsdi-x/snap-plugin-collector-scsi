@@ -17,45 +17,29 @@ limitations under the License.
 package scsi
 
 import (
-	"fmt"
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/intelsdi-x/snap-plugin-lib-go/v1/plugin"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-const (
-	invalidValue = iota
-	invalidEntry = iota
-)
-
-var (
-	mockMts = []plugin.Metric{
-
-		plugin.Metric{
-			Namespace: plugin.NewNamespace("intel", "scsi", "*", "iodone_cnt"),
-		},
-
-		plugin.Metric{
-			Namespace: plugin.NewNamespace("intel", "scsi", "*", "ioerr_cnt"),
-		},
-		plugin.Metric{
-			Namespace: plugin.NewNamespace("intel", "scsi", "*", "iorequest_cnt"),
-		},
-	}
-	srcMockFile    = "/tmp/scsi_mock"
-	srcMockFileInv = "/tmp/scsi_invalid_mock"
-)
-
 func TestScsiCollectorPlugin(t *testing.T) {
-
-	//config := plugin.Config{}
+	sysFs, err := os.Getwd()
+	if err != nil {
+		os.Exit(1)
+	}
+	sysFs = filepath.Join(sysFs, "sys")
+	config := plugin.Config{
+		"sysPath": sysFs,
+	}
 	Convey("Create Scsi Collector", t, func() {
 		scsiCol := ScsiCollector{}
 		Convey("So Scsi should not be nil", func() {
 			So(scsiCol, ShouldNotBeNil)
 		})
+
 		Convey("So Scsi should be of scsi type", func() {
 			So(scsiCol, ShouldHaveSameTypeAs, ScsiCollector{})
 		})
@@ -73,84 +57,31 @@ func TestScsiCollectorPlugin(t *testing.T) {
 	})
 
 	Convey("Get Metric Scsi Types", t, func() {
-		createMockFiles()
-		//	defaultSrcFile = srcMockFile
 		scsiCol := ScsiCollector{}
-		cfg := plugin.Config{
-			"sysPath": "/sys",
-		}
-		mts := []plugin.Metric{}
+		var cfg = plugin.Config{}
+		Convey("So should return 3 types of metrics", func() {
+			metrics, err := scsiCol.GetMetricTypes(cfg)
+			So(len(metrics), ShouldBeGreaterThan, 1)
+			So(err, ShouldBeNil)
+			So(metrics, ShouldNotBeEmpty)
+			So(len(metrics), ShouldResemble, 3)
+			So(len(metrics), ShouldEqual, 3)
+			//	So(metrics[0].Data, ShouldNotBeNil)
+		})
 
-		for _, metric := range scsiMetricsTypes {
+		Convey("Collect SCSi Metrics", t, func() {
+			scsiCol := ScsiCollector{}
+			mts := []plugin.Metric{}
 
-			metric := plugin.Metric{Namespace: plugin.NewNamespace(nsVendor, nsClass).AddDynamicElement("", "").AddStaticElement(metric)}
-			mts = append(mts, metric)
-			fmt.Println(mts)
-		}
+			for _, m := range scsiMetricsTypes {
 
-		So(len(mts), ShouldEqual, 3)
-		metrics, err := scsiCol.GetMetricTypes(cfg)
+				mts = append(mts, plugin.Metric{Namespace: plugin.NewNamespace(nsVendor, nsClass).AddStaticElement(m), Config: config})
+			}
+			_, err := scsiCol.CollectMetrics(mts)
 
-		So(err, ShouldBeNil)
-		So(metrics, ShouldNotBeEmpty)
-		So(len(metrics), ShouldResemble, 3)
+			So(err, ShouldBeNil)
+			So(len(mts), ShouldResemble, 3)
+
+		})
 	})
-
-	Convey("Collect cnt Metrics", t, func() {
-		scsiCol := ScsiCollector{}
-		mts := []plugin.Metric{}
-		cfg := plugin.Config{
-			"sysPath": "/sys",
-		}
-		for _, m := range scsiMetricsTypes {
-
-			mts = append(mts, plugin.Metric{Namespace: plugin.NewNamespace(nsVendor, nsClass).AddStaticElements(m), Config: cfg})
-			fmt.Println(mts)
-		}
-		metrics, err := scsiCol.CollectMetrics(mts)
-		So(err, ShouldBeNil)
-
-		So(len(metrics), ShouldResemble, 3)
-		So(metrics[0].Data, ShouldNotBeNil)
-
-	})
-}
-
-func createMockFiles() {
-	deleteMockFiles()
-	// 	mocked content of srcMockFile (kernel 2.6+)
-	srcMockFileCont := []byte(`  8    0 test_scsi  0x234 `)
-	f, _ := os.Create(srcMockFile)
-	f.Write(srcMockFileCont)
-}
-
-func createInvalidMockFile(kind int) {
-	os.Remove(srcMockFileInv)
-
-	var srcMockFileContInv []byte
-
-	switch kind {
-	case invalidValue:
-		srcMockFileContInv = []byte(`    8       0 test_scsi abc`)
-		break
-
-	case invalidEntry:
-		srcMockFileContInv = []byte(`    1       2 unknown entry`)
-		break
-
-	default:
-		srcMockFileContInv = []byte(``)
-		break
-
-	}
-
-	f, _ := os.Create(srcMockFileInv)
-	f.Write(srcMockFileContInv)
-
-}
-
-func deleteMockFiles() {
-	os.Remove(srcMockFile)
-	os.Remove(srcMockFileInv)
-
 }

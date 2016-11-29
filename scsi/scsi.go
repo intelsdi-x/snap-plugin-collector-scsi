@@ -71,6 +71,7 @@ func (ScsiCollector) CollectMetrics(mts []plugin.Metric) ([]plugin.Metric, error
 	if err != nil {
 		return nil, err
 	}
+
 	sysPath := filepath.Join(sysPathConf, scsiPath)
 
 	for _, m := range mts {

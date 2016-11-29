@@ -35,16 +35,13 @@ func listScsiDevices(dirName string) ([]string, error) {
 		return scsiList, err
 	}
 	for _, dir := range sysPathStats {
-
 		dvre := regexp.MustCompile(`^[0-9]:.?:.?:.?`)
 		dirName := dir.Name()
 		if dvre.MatchString(dirName) {
 			scsiList = append(scsiList, dirName)
 		}
-
 	}
 	return scsiList, nil
-
 }
 
 func getCounter(counterName string, scsiList []string, ns plugin.Namespace) ([]plugin.Metric, error) {
@@ -65,7 +62,6 @@ func getCounter(counterName string, scsiList []string, ns plugin.Namespace) ([]p
 		}
 		metrics = append(metrics, metric)
 	}
-
 	return metrics, nil
 }
 
