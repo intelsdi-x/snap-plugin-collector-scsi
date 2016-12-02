@@ -1,5 +1,3 @@
-// +build small
-
 /*
 http://www.apache.org/licenses/LICENSE-2.0.txt
 Copyright 2016 Intel Corporation
@@ -11,7 +9,7 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-limitations under the License.
+limitations under the Licefunc TestScsiCollector(t *testing.T) {nse.
 */
 
 package scsi
@@ -25,7 +23,7 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-func TestScsiCollectorPlugin(t *testing.T) {
+func TestScsiCollector(t *testing.T) {
 	sysFs, err := os.Getwd()
 	if err != nil {
 		os.Exit(1)
@@ -34,6 +32,7 @@ func TestScsiCollectorPlugin(t *testing.T) {
 	config := plugin.Config{
 		"sysPath": sysFs,
 	}
+
 	Convey("Create Scsi Collector", t, func() {
 		scsiCol := ScsiCollector{}
 		Convey("So Scsi should not be nil", func() {
@@ -61,27 +60,28 @@ func TestScsiCollectorPlugin(t *testing.T) {
 		var cfg = plugin.Config{}
 		Convey("So should return 3 types of metrics", func() {
 			metrics, err := scsiCol.GetMetricTypes(cfg)
-			So(len(metrics), ShouldBeGreaterThan, 1)
+			So(len(metrics), ShouldBeGreaterThan, 0)
 			So(err, ShouldBeNil)
 			So(metrics, ShouldNotBeEmpty)
 			So(len(metrics), ShouldResemble, 3)
 			So(len(metrics), ShouldEqual, 3)
-			//	So(metrics[0].Data, ShouldNotBeNil)
-		})
-
-		Convey("Collect SCSi Metrics", t, func() {
-			scsiCol := ScsiCollector{}
-			mts := []plugin.Metric{}
-
-			for _, m := range scsiMetricsTypes {
-
-				mts = append(mts, plugin.Metric{Namespace: plugin.NewNamespace(nsVendor, nsClass).AddStaticElement(m), Config: config})
-			}
-			_, err := scsiCol.CollectMetrics(mts)
-
-			So(err, ShouldBeNil)
-			So(len(mts), ShouldResemble, 3)
 
 		})
 	})
+	Convey("Collect SCSi Metrics", t, func() {
+		scsiCol := ScsiCollector{}
+		mts := []plugin.Metric{}
+		//  mts = append(mts, plugin.Metric{Namespace: plugin.NewNamespace(nsVendor, nsClass).AddDynamicElement("device_id", "id of device").AddStaticElement(m), Config: config})
+		for _, m := range scsiMetricsTypes {
+
+			//	mts = append(mts, plugin.Metric{Namespace: plugin.NewNamespace(nsVendor, nsClass).AddStaticElement(m), Config: config})
+			mts = append(mts, plugin.Metric{Namespace: plugin.NewNamespace(nsVendor, nsClass).AddDynamicElement("device_id", "").AddStaticElement(m), Config: config})
+		}
+		metrics, err := scsiCol.CollectMetrics(mts)
+		So(err, ShouldBeNil)
+		So(len(metrics), ShouldResemble, 3)
+		So(metrics[0].Data, ShouldNotBeNil)
+
+	})
+
 }

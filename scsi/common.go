@@ -41,7 +41,6 @@ func listScsiDevices(dirName string) ([]string, error) {
 	}
 	return scsiList, nil
 }
-
 func getCounter(counterName string, scsiList []string, ns plugin.Namespace) ([]plugin.Metric, error) {
 	metrics := []plugin.Metric{}
 	for _, dev := range scsiList {
@@ -49,7 +48,7 @@ func getCounter(counterName string, scsiList []string, ns plugin.Namespace) ([]p
 		copy(newNs, ns)
 		newNs[2].Value = dev
 
-		filePath := filepath.Join(scsiPath, dev, counterName)
+		filePath := filepath.Join("/sys", scsiPath, dev, counterName)
 		cnt, err := readHex(filePath)
 		if err != nil {
 			return metrics, nil
@@ -59,6 +58,7 @@ func getCounter(counterName string, scsiList []string, ns plugin.Namespace) ([]p
 			Data:      cnt,
 		}
 		metrics = append(metrics, metric)
+
 	}
 	return metrics, nil
 }
@@ -69,19 +69,18 @@ func readHex(filename string) (int64, error) {
 		return 0, err
 	}
 	defer f.Close()
-
 	r := bufio.NewReader(f)
-
 	// The int files that this is concerned with should only be one liners.
-	line, err := r.ReadString('\n')
-	if err != nil {
-		return 0, err
+	for {
+		line, err := r.ReadString('\n')
+		if err != nil {
+			return 0, err // if you return error
+		}
+		i := strings.TrimSpace(line)[2:] // 0x 23
+		number, err := strconv.ParseInt(i, 16, 0)
+		if err != nil {
+			return 0, nil
+		}
+		return number, nil
 	}
-
-	i := strings.TrimSpace(line)
-
-	number, _ := strconv.ParseInt(i, 10, 64)
-
-	return number, nil
-
 }

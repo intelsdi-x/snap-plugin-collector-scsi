@@ -15,6 +15,7 @@ limitations under the License.
 package scsi
 
 import (
+	"fmt"
 	"path/filepath"
 
 	"github.com/intelsdi-x/snap-plugin-lib-go/v1/plugin"
@@ -56,7 +57,7 @@ func (ScsiCollector) GetMetricTypes(cfg plugin.Config) ([]plugin.Metric, error) 
 
 	mts := []plugin.Metric{}
 	for _, metric := range scsiMetricsTypes {
-		metric := plugin.Metric{Namespace: plugin.NewNamespace(nsVendor, nsClass).AddDynamicElement("device_id", "Id of the scsi device").AddStaticElement(metric)}
+		metric := plugin.Metric{Namespace: plugin.NewNamespace(nsVendor, nsClass).AddDynamicElement("device_id", "").AddStaticElement(metric)}
 		mts = append(mts, metric)
 	}
 	return mts, nil
@@ -71,7 +72,6 @@ func (ScsiCollector) CollectMetrics(mts []plugin.Metric) ([]plugin.Metric, error
 	}
 
 	sysPath := filepath.Join(sysPathConf, scsiPath)
-
 	for _, m := range mts {
 		lastElement := len(m.Namespace.Strings()) - 1
 		cnt := m.Namespace.Strings()[lastElement]
@@ -85,7 +85,7 @@ func (ScsiCollector) CollectMetrics(mts []plugin.Metric) ([]plugin.Metric, error
 			return nil, err
 		}
 		metrics = append(metrics, metric...)
-
+		fmt.Println(metrics)
 	}
 	return metrics, nil
 
