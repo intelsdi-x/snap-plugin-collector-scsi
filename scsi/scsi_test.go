@@ -23,6 +23,7 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
+// TestScsiCollector Suite
 func TestScsiCollector(t *testing.T) {
 	sysFs, err := os.Getwd()
 	if err != nil {
@@ -30,7 +31,7 @@ func TestScsiCollector(t *testing.T) {
 	}
 	sysFs = filepath.Join(sysFs, "sys")
 	config := plugin.Config{
-		"sysPath": sysFs,
+		"sysPath": "sys",
 	}
 
 	Convey("Create Scsi Collector", t, func() {
@@ -75,7 +76,7 @@ func TestScsiCollector(t *testing.T) {
 		for _, m := range scsiMetricsTypes {
 
 			//	mts = append(mts, plugin.Metric{Namespace: plugin.NewNamespace(nsVendor, nsClass).AddStaticElement(m), Config: config})
-			mts = append(mts, plugin.Metric{Namespace: plugin.NewNamespace(nsVendor, nsClass).AddDynamicElement("device_id", "").AddStaticElement(m), Config: config})
+			mts = append(mts, plugin.Metric{Namespace: plugin.NewNamespace(nsVendor, nsClass).AddDynamicElement("device_id", "id of device").AddStaticElement(m), Config: config})
 		}
 		metrics, err := scsiCol.CollectMetrics(mts)
 		So(err, ShouldBeNil)
