@@ -1,4 +1,4 @@
-# snap plugin collector scsi
+# Snap plugin collector scsi
 
 1. [Contributing Code](#contributing-code)
 2. [Contributing Examples](#contributing-examples)

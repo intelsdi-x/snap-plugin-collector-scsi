@@ -27,7 +27,7 @@ It's used in the [Snap framework](http://github.com:intelsdi-x/snap).
 
 * golang 1.7+ - needed only for building
 * This Plugin compatible with kernel > 2.6
-* Linux/amd64
+* Linux/x86_64
 
 ### Operating systems
 
@@ -53,7 +53,7 @@ $ make
 This builds the plugin in `/build/`
 
 ### Configuration and Usage
-* Set up the [snap framework](https://github.com/intelsdi-x/snap/blob/master/README.md#getting-started)
+* Set up the [Snap framework](https://github.com/intelsdi-x/snap/blob/master/README.md#getting-started)
 * Load the plugin and create a task, see example in [Examples](#examples).
 
 ## Documentation
@@ -61,12 +61,12 @@ This builds the plugin in `/build/`
 
 Example of running snap scsi collector and writing data to file.
 
-Ensure [snap daemon is running](https://github.com/intelsdi-x/snap#running-snap):
+Ensure [Snap daemon is running](https://github.com/intelsdi-x/snap#running-snap):
 * initd: `service snap-telemetry start`
 * systemd: `systemctl start snap-telemetry`
 * command line: `snapteld -l 1 -t 0 &`
 
-Download and load snap plugins:
+Download and load Snap plugins:
 ```
 $ wget http://snap.ci.snap-telemetry.io/plugins/snap-plugin-collector-scsi/latest/linux/x86_64/snap-plugin-collector-scsi
 $ wget http://snap.ci.snap-telemetry.io/plugins/snap-plugin-publisher-file/latest/linux/x86_64/snap-plugin-publisher-file
@@ -88,7 +88,6 @@ Create a task manifest file  (exemplary files in [examples/tasks/] (examples/tas
          /intel/scsi/*/iodone_cnt: {}
          /intel/scsi/*/ioerr_cnt: {}
          /intel/scsi/*/iorequest_cnt: {}
-
       publish:
         - plugin_name: "file"
           config:
@@ -97,8 +96,8 @@ Create a task manifest file  (exemplary files in [examples/tasks/] (examples/tas
 Download an [example task file](https://github.com/intelsdi-x/snap-plugin-collector-scsi/blob/master/examples/tasks/) and load it:
 
 ```
-$ curl -sfLO https://raw.githubusercontent.com/intelsdi-x/snap-plugin-collector-scsi/master/examples/tasks/scsi-file.json
-$ snapctl task create -t scsi-file.json
+$ curl -sfLO https://raw.githubusercontent.com/intelsdi-x/snap-plugin-collector-scsi/master/examples/tasks/scsi-file.yaml
+$ snapctl task create -t scsi-file.yaml
 Using task manifest to create task
 Task created
 ID: 250323af-12b0-4bf8-a526-eb2ca7d8ae32

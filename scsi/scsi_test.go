@@ -66,23 +66,17 @@ func TestScsiCollector(t *testing.T) {
 			So(metrics, ShouldNotBeEmpty)
 			So(len(metrics), ShouldResemble, 3)
 			So(len(metrics), ShouldEqual, 3)
-
 		})
 	})
 	Convey("Collect SCSi Metrics", t, func() {
 		scsiCol := ScsiCollector{}
 		mts := []plugin.Metric{}
-		//  mts = append(mts, plugin.Metric{Namespace: plugin.NewNamespace(nsVendor, nsClass).AddDynamicElement("device_id", "id of device").AddStaticElement(m), Config: config})
 		for _, m := range scsiMetricsTypes {
-
-			//	mts = append(mts, plugin.Metric{Namespace: plugin.NewNamespace(nsVendor, nsClass).AddStaticElement(m), Config: config})
 			mts = append(mts, plugin.Metric{Namespace: plugin.NewNamespace(nsVendor, nsClass).AddDynamicElement("device_id", "id of device").AddStaticElement(m), Config: config})
 		}
 		metrics, err := scsiCol.CollectMetrics(mts)
 		So(err, ShouldBeNil)
 		So(len(metrics), ShouldResemble, 3)
 		So(metrics[0].Data, ShouldNotBeNil)
-
 	})
-
 }

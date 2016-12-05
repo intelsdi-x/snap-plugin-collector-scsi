@@ -25,6 +25,10 @@ import (
 	"github.com/intelsdi-x/snap-plugin-lib-go/v1/plugin"
 )
 
+const (
+	nsElement = 2
+)
+
 // list scsi devices in devices folder
 func listScsiDevices(dirName string) ([]string, error) {
 
@@ -46,13 +50,12 @@ func listScsiDevices(dirName string) ([]string, error) {
 	return scsiList, nil
 }
 
-// get cnt file names from scsilist
 func getCounter(sysPath string, counterName string, scsiList []string, ns plugin.Namespace) ([]plugin.Metric, error) {
 	metrics := []plugin.Metric{}
 	for _, dev := range scsiList {
 		newNs := make([]plugin.NamespaceElement, len(ns))
 		copy(newNs, ns)
-		newNs[2].Value = dev
+		newNs[nsElement].Value = dev
 		filePath := filepath.Join(sysPath, scsiPath, dev, counterName)
 		cnt, err := readHex(filePath)
 		if err != nil {
@@ -63,7 +66,6 @@ func getCounter(sysPath string, counterName string, scsiList []string, ns plugin
 			Data:      cnt,
 		}
 		metrics = append(metrics, metric)
-
 	}
 	return metrics, nil
 }
