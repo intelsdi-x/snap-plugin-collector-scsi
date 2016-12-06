@@ -26,7 +26,7 @@ import (
 )
 
 const (
-	nsElement = 2
+	deviceId = 2
 )
 
 // list scsi devices in devices folder
@@ -46,7 +46,6 @@ func listScsiDevices(dirName string) ([]string, error) {
 			scsiList = append(scsiList, dirName)
 		}
 	}
-
 	return scsiList, nil
 }
 
@@ -55,7 +54,8 @@ func getCounter(sysPath string, counterName string, scsiList []string, ns plugin
 	for _, dev := range scsiList {
 		newNs := make([]plugin.NamespaceElement, len(ns))
 		copy(newNs, ns)
-		newNs[nsElement].Value = dev
+		newNs[deviceId].Value = dev
+
 		filePath := filepath.Join(sysPath, scsiPath, dev, counterName)
 		cnt, err := readHex(filePath)
 		if err != nil {
