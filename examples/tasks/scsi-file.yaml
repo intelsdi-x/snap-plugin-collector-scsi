@@ -1,0 +1,17 @@
+---
+  version: 1
+  schedule:
+    type: "simple"
+    interval: "1s"
+  max-failures: 10
+  workflow:
+    collect:
+      metrics:
+         /intel/scsi/*/iodone_cnt: {}
+         /intel/scsi/*/ioerr_cnt: {}
+         /intel/scsi/*/iorequest_cnt: {}
+
+      publish:
+        - plugin_name: "file"
+          config:
+file: "/tmp/scsi_metrics.log"
