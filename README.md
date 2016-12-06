@@ -71,8 +71,8 @@ Download and load Snap plugins:
 $ wget http://snap.ci.snap-telemetry.io/plugins/snap-plugin-collector-scsi/latest/linux/x86_64/snap-plugin-collector-scsi
 $ wget http://snap.ci.snap-telemetry.io/plugins/snap-plugin-publisher-file/latest/linux/x86_64/snap-plugin-publisher-file
 $ chmod 755 snap-plugin-*
-$ snapctl plugin load snap-plugin-collector-scsi
-$ snapctl plugin load snap-plugin-publisher-file
+$ snaptel plugin load snap-plugin-collector-scsi
+$ snaptel plugin load snap-plugin-publisher-file
 
 Create a task manifest file  (exemplary files in [examples/tasks/] (examples/tasks/)):
 ```yaml
@@ -97,7 +97,7 @@ Download an [example task file](https://github.com/intelsdi-x/snap-plugin-collec
 
 ```
 $ curl -sfLO https://raw.githubusercontent.com/intelsdi-x/snap-plugin-collector-scsi/master/examples/tasks/scsi-file.yaml
-$ snapctl task create -t scsi-file.yaml
+$ snaptel task create -t scsi-file.yaml
 Using task manifest to create task
 Task created
 ID: 250323af-12b0-4bf8-a526-eb2ca7d8ae32
@@ -105,16 +105,16 @@ Name: Task-250323af-12b0-4bf8-a526-eb2ca7d8ae32
 State: Running
 ```
 
-See realtime output from `snapctl task watch <task_id>` (CTRL+C to exit)
+See realtime output from `snaptel task watch <task_id>` (CTRL+C to exit)
 ```
-$ snapctl task watch 250323af-12b0-4bf8-a526-eb2ca7d8ae32
+$ snaptel task watch 250323af-12b0-4bf8-a526-eb2ca7d8ae32
 ```
 
 This data is published to a file `/tmp/scsi_metrics` per task specification
 
 Stop task:
 ```
-$ snapctl task stop 250323af-12b0-4bf8-a526-eb2ca7d8ae32
+$ snaptel task stop 250323af-12b0-4bf8-a526-eb2ca7d8ae32
 Task stopped:
 ID: 250323af-12b0-4bf8-a526-eb2ca7d8ae32
 ```
