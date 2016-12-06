@@ -59,7 +59,7 @@ This builds the plugin in `/build/`
 ## Documentation
 ### Examples
 
-Example of running snap scsi collector and writing data to file.
+Example of running Snap scsi collector and writing data to file.
 
 Ensure [Snap daemon is running](https://github.com/intelsdi-x/snap#running-snap):
 * initd: `service snap-telemetry start`
@@ -133,12 +133,14 @@ We love contributions!
 There's more than one way to give back, from examples to blogs to code updates. See our recommended process in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
-[snap](http://github.com/intelsdi-x/snap), along with this plugin, is an Open Source software released under the Apache 2.0 [License](LICENSE).
+[Snap](http://github.com/intelsdi-x/snap), along with this plugin, is an Open Source software released under the Apache 2.0 [License](LICENSE).
 
 ## Acknowledgements
 This is Open Source software released under the Apache 2.0 License. Please see the [LICENSE](LICENSE) file for full license details.
 
 * Authors: [Marcin Spoczynski](https://github.com/sandlbn/) and [Ramesh Raju](https://github.com/rraju2/)
+
+This software has been contributed by MIKELANGELO & Superfluidity, Horizon 2020 projects co-funded by the European Union. https://www.mikelangelo-project.eu/ http://superfluidity.eu/
 
 ## Thank You
 And **thank you!** Your contribution, through code and participation, is incredibly important to us.
