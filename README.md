@@ -33,7 +33,6 @@ It's used in the [Snap framework](http://github.com:intelsdi-x/snap).
 
 All OSs currently supported by snap:
 * Linux/amd64
-* Darwin/amd64
 
 ### Installation
 #### Download use plugin binary:
