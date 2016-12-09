@@ -1,4 +1,4 @@
-# Snap plugin collector scsi
+# snap plugin collector scsi
 
 1. [Contributing Code](#contributing-code)
 2. [Contributing Examples](#contributing-examples)
@@ -34,7 +34,7 @@ $ git checkout -b some-topic-branch
 * Open a pull request for the appropriate project.
 * Contributors will review your pull request, suggest changes, and merge it when it’s ready and/or offer feedback.
 
-If you have questions feel free to contact the [maintainers](https://github.com/intelsdi-x/snap/blob/master/README.md#maintainers).
+If you have questions feel free to contact the [maintainers](https://github.com/intelsdi-x/snap/blob/master/docs/MAINTAINERS.md).
 
 ## Contributing Examples
 The most immediately helpful way you can benefit this project is by cloning the repository, adding some further examples and submitting a pull request.
