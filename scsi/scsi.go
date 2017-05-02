@@ -25,7 +25,7 @@ const (
 	// PLUGIN scsi collector namespace part
 	Name = "scsi"
 	// VERSION of scsi info plugin
-	Version = 1
+	Version = 2
 	// VENDOR namespace part
 	nsVendor = "intel"
 	// FS namespace part
