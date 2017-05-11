@@ -1,10 +1,10 @@
 package: github.com/intelsdi-x/snap-plugin-collector-scsi
 import:
 - package: github.com/intelsdi-x/snap-plugin-lib-go
-  version: 4b5999a62ffb7604f173c1ab3c2205ba8b559624
   subpackages:
   - v1/plugin
 testImport:
 - package: github.com/smartystreets/goconvey
+  version: ^1.6.2
   subpackages:
   - convey
