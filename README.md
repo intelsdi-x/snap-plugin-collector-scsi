@@ -11,6 +11,7 @@ It's used in the [Snap framework](http://github.com:intelsdi-x/snap).
   * [Installation](#installation)
   * [Configuration and Usage](#configuration-and-usage)
 2. [Documentation](#documentation)
+  * [Collected metrics](#collected-metrics)
   * [Examples](#examples)
   * [Roadmap](#roadmap)
 3. [Community Support](#community-support)
@@ -56,6 +57,9 @@ This builds the plugin in `/build/`
 * Load the plugin and create a task, see example in [Examples](#examples).
 
 ## Documentation
+### Collected Metrics
+List of metrics collected by this plugin can be found in [METRICS.md file](METRICS.md).
+
 ### Examples
 
 Example of running Snap scsi collector and writing data to file.
