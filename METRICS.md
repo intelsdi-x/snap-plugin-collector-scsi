@@ -1,3 +1,5 @@
+# snap collector plugin - scsi
+
 ## Collected Metrics
 
 This plugin has the ability to gather the following metrics:
