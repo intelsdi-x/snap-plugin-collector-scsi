@@ -1,21 +1,24 @@
 [![Build Status](https://api.travis-ci.org/intelsdi-x/snap-plugin-collector-scsi.svg)](https://travis-ci.org/intelsdi-x/snap-plugin-collector-scsi )
 [![Go Report Card](http://goreportcard.com/badge/intelsdi-x/snap-plugin-collector-scsi)](http://goreportcard.com/report/intelsdi-x/snap-plugin-collector-scsi)
 
+# Snap collector plugin - scsi
+
 This plugin collects metrics from scsi.  
 
 It's used in the [Snap framework](http://github.com:intelsdi-x/snap).
 
 1. [Getting Started](#getting-started)
-  * [System Requirements](#system-requirements)
-  * [Operating systems](#operating-systems)
-  * [Installation](#installation)
-  * [Configuration and Usage](#configuration-and-usage)
+   * [System Requirements](#system-requirements)
+   * [Operating systems](#operating-systems)
+   * [Installation](#installation)
+   * [Configuration and Usage](#configuration-and-usage)
 2. [Documentation](#documentation)
-  * [Examples](#examples)
-  * [Roadmap](#roadmap)
+   * [Collected metrics](#collected-metrics)
+   * [Examples](#examples)
+   * [Roadmap](#roadmap)
 3. [Community Support](#community-support)
 4. [Contributing](#contributing)
-5. [License](#license-and-authors)
+5. [License](#license)
 6. [Acknowledgements](#acknowledgements)
 7. [Thank you](#thank-you)
 
@@ -56,6 +59,9 @@ This builds the plugin in `/build/`
 * Load the plugin and create a task, see example in [Examples](#examples).
 
 ## Documentation
+### Collected Metrics
+List of metrics collected by this plugin can be found in [METRICS.md file](METRICS.md).
+
 ### Examples
 
 Example of running Snap scsi collector and writing data to file.
